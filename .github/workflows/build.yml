@@ -55,7 +55,32 @@ jobs:
           p.write_text(s)
           PY
 
+      - name: Fix back navigation API
 
+        run: |
+
+          python3 - <<'PY'
+
+          from pathlib import Path
+
+          p = Path("vision-next/app/src/main/java/com/visionnext/launcher/MainActivity.kt")
+
+          s = p.read_text()
+
+          old = "onBackPressedDispatcher.onBackPressed()"
+
+          new = "onBackPressed()"
+
+          if old not in s:
+
+              raise SystemExit("Expected back-navigation code was not found")
+
+          p.write_text(s.replace(old, new))
+
+          print("Back-navigation compatibility fix applied")
+
+          PY
+          
       - name: Build debug APK
         run: gradle --no-daemon -p vision-next assembleDebug
 
